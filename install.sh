@@ -13,7 +13,7 @@ REO_DIR="$(cd $(dirname $0) && pwd)"
 
 THEME_VARIANTS=('tela' 'vimix' 'stylish' 'whitesur')
 ICON_VARIANTS=('color' 'white' 'whitesur')
-SCREEN_VARIANTS=('1080p' '2k' '4k' 'ultrawide' 'ultrawide2k')
+SCREEN_VARIANTS=('1080p' '1200p' '2k' '4k' 'ultrawide' 'ultrawide2k')
 
 #################################
 #   :::::: C O L O R S ::::::   #
@@ -62,7 +62,7 @@ usage() {
   printf "  %-25s%s\n" "-b, --boot" "install grub theme into /boot/grub/themes"
   printf "  %-25s%s\n" "-t, --theme" "theme variant(s) [tela|vimix|stylish|whitesur] (default is tela)"
   printf "  %-25s%s\n" "-i, --icon" "icon variant(s) [color|white|whitesur] (default is color)"
-  printf "  %-25s%s\n" "-s, --screen" "screen display variant(s) [1080p|2k|4k|ultrawide|ultrawide2k] (default is 1080p)"
+  printf "  %-25s%s\n" "-s, --screen" "screen display variant(s) [1080p|1200p|2k|4k|ultrawide|ultrawide2k] (default is 1080p)"
   printf "  %-25s%s\n" "-r, --remove" "Remove theme (must add theme name option)"
   printf "  %-25s%s\n" "-g, --generate" "do not install, but generate theme into chosen directory"
   printf "  %-25s%s\n" "-h, --help" "Show this help"
@@ -156,6 +156,8 @@ install() {
     # Make sure the right resolution for grub is set
     if [[ ${screen} == '1080p' ]]; then
       gfxmode="GRUB_GFXMODE=1920x1080,auto"
+    elif [[ ${screen} == '1200p' ]]; then
+      gfxmode="GRUB_GFXMODE=1920x1200,auto"
     elif [[ ${screen} == 'ultrawide' ]]; then
       gfxmode="GRUB_GFXMODE=2560x1080,auto"
     elif [[ ${screen} == '4k' ]]; then
@@ -284,15 +286,17 @@ run_dialog() {
     --radiolist "Choose your Display Resolution : " 15 40 5 \
       1 "1080p (1920x1080)" on  \
       2 "1080p ultrawide (2560x1080)" off  \
-      3 "2k (2560x1440)" off \
-      4 "4k (3840x2160)" off \
-      5 "1440p ultrawide (3440x1440)" off --output-fd 1 )
+      3 "1200p (1920x1200)" on  \
+      4 "2k (2560x1440)" off \
+      5 "4k (3840x2160)" off \
+      6 "1440p ultrawide (3440x1440)" off --output-fd 1 )
       case "$tui" in
         1) screen="1080p"       ;;
         2) screen="ultrawide"   ;;
-        3) screen="2k"          ;;
-        4) screen="4k"          ;;
-        5) screen="ultrawide2k" ;;
+        3) screen="1200p"       ;;
+        4) screen="2k"          ;;
+        5) screen="4k"          ;;
+        6) screen="ultrawide2k" ;;
         *) operation_canceled   ;;
      esac
   fi
@@ -538,20 +542,24 @@ while [[ $# -gt 0 ]]; do
             screens+=("${SCREEN_VARIANTS[0]}")
             shift
             ;;
-          2k)
+          1200p)
             screens+=("${SCREEN_VARIANTS[1]}")
             shift
             ;;
-          4k)
+          2k)
             screens+=("${SCREEN_VARIANTS[2]}")
             shift
             ;;
-          ultrawide)
+          4k)
             screens+=("${SCREEN_VARIANTS[3]}")
             shift
             ;;
-          ultrawide2k)
+          ultrawide)
             screens+=("${SCREEN_VARIANTS[4]}")
+            shift
+            ;;
+          ultrawide2k)
+            screens+=("${SCREEN_VARIANTS[5]}")
             shift
             ;;
           -*)
